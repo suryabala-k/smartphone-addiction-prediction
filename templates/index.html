@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#4936a8">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icon-192.png') }}">
 
     <title>Smartphone Addiction Prediction</title>
 
@@ -354,6 +357,14 @@
     </footer>
 
 </div>
+    <script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/static/service-worker.js")
+            .catch((error) => console.error("Service worker registration failed:", error));
+    });
+}
+</script>
 </body>
 </html>
 
