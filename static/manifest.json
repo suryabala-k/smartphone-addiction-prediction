@@ -1,0 +1,24 @@
+
+{
+  "name": "Smartphone Addiction Prediction",
+  "short_name": "Phone Health",
+  "description": "Machine learning based smartphone addiction prediction",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5e9ff",
+  "theme_color": "#4936a8",
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
