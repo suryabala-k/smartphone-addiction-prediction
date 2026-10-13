@@ -1,123 +1,103 @@
-import streamlit as st
+from flask import Flask, render_template, request
 import pandas as pd
 import pickle
+import os
 
-st.set_page_config(
-    page_title="Smartphone Addiction Prediction",
-    page_icon="📱",
-    layout="centered"
+app = Flask(__name__)
+
+# Load the trained machine learning model
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "smartphone_addiction_model.pkl"
 )
 
-@st.cache_resource
-def load_model():
-    with open("smartphone_addiction_model.pkl", "rb") as file:
-        return pickle.load(file)
+with open(MODEL_PATH, "rb") as file:
+    model = pickle.load(file)
 
-try:
-    model = load_model()
-except Exception as error:
-    st.error("Could not load the model. Please check the model file.")
-    st.code(str(error))
-    st.stop()
 
-st.title("📱 Smartphone Addiction Prediction")
-st.write(
-    "Enter smartphone usage details to predict "
-    "the project-defined addiction category."
-)
+@app.route("/", methods=["GET", "POST"])
+def home():
+    prediction = None
+    error_message = None
+    form_data = {}
 
-st.info(
-    "This is an educational project, not a medical diagnosis."
-)
+    if request.method == "POST":
+        try:
+            age = int(request.form["age"])
+            gender = request.form["gender"]
+            daily_usage = float(request.form["daily_usage"])
+            sleep_hours = float(request.form["sleep_hours"])
+            academic_performance = float(
+                request.form["academic_performance"]
+            )
+            phone_checks = int(request.form["phone_checks"])
+            apps_used = int(request.form["apps_used"])
+            social_media = float(request.form["social_media"])
+            gaming = float(request.form["gaming"])
 
-st.header("Student Information")
+            form_data = request.form.to_dict()
 
-age = st.number_input(
-    "Age", min_value=10, max_value=100, value=18
-)
+            # Validate input values
+            if not 10 <= age <= 100:
+                raise ValueError("Age must be between 10 and 100.")
 
-gender = st.selectbox(
-    "Gender", ["Male", "Female", "Other"]
-)
+            if not 0 <= daily_usage <= 24:
+                raise ValueError(
+                    "Daily usage must be between 0 and 24 hours."
+                )
 
-st.header("Smartphone Usage")
+            if not 0 <= sleep_hours <= 24:
+                raise ValueError(
+                    "Sleep duration must be between 0 and 24 hours."
+                )
 
-daily_usage = st.number_input(
-    "Daily smartphone usage (hours)",
-    min_value=0.0, max_value=24.0, value=5.0
-)
+            if not 0 <= social_media <= 24:
+                raise ValueError(
+                    "Social media usage must be between 0 and 24 hours."
+                )
 
-sleep_hours = st.number_input(
-    "Sleep duration (hours)",
-    min_value=0.0, max_value=24.0, value=7.0
-)
+            if not 0 <= gaming <= 24:
+                raise ValueError(
+                    "Gaming time must be between 0 and 24 hours."
+                )
 
-academic_performance = st.number_input(
-    "Academic performance",
-    min_value=0.0, max_value=100.0, value=75.0
-)
+            if phone_checks < 0 or apps_used < 0:
+                raise ValueError(
+                    "Phone checks and apps used cannot be negative."
+                )
 
-phone_checks = st.number_input(
-    "Phone checks per day",
-    min_value=0, max_value=1000, value=50
-)
+            # Prepare input using the exact feature names
+            input_data = pd.DataFrame([{
+                "Age": age,
+                "Gender": gender,
+                "Daily_Usage_Hours": daily_usage,
+                "Sleep_Hours": sleep_hours,
+                "Academic_Performance": academic_performance,
+                "Phone_Checks_Per_Day": phone_checks,
+                "Apps_Used_Daily": apps_used,
+                "Time_on_Social_Media": social_media,
+                "Time_on_Gaming": gaming
+            }])
 
-apps_used = st.number_input(
-    "Apps used daily",
-    min_value=0, max_value=500, value=10
-)
+            # Generate prediction
+            prediction = model.predict(input_data)[0]
 
-social_media = st.number_input(
-    "Social media usage (hours)",
-    min_value=0.0, max_value=24.0, value=2.0
-)
+        except ValueError as error:
+            error_message = str(error)
 
-gaming = st.number_input(
-    "Gaming time (hours)",
-    min_value=0.0, max_value=24.0, value=1.0
-)
+        except Exception:
+            error_message = (
+                "Prediction failed. Please check the model "
+                "and the input feature formats."
+            )
 
-if st.button("Predict Addiction Category"):
+    return render_template(
+        "index.html",
+        prediction=prediction,
+        error_message=error_message,
+        form_data=form_data
+    )
 
-    input_data = pd.DataFrame([{
-        "Age": age,
-        "Gender": gender,
-        "Daily_Usage_Hours": daily_usage,
-        "Sleep_Hours": sleep_hours,
-        "Academic_Performance": academic_performance,
-        "Phone_Checks_Per_Day": phone_checks,
-        "Apps_Used_Daily": apps_used,
-        "Time_on_Social_Media": social_media,
-        "Time_on_Gaming": gaming
-    }])
 
-    try:
-        prediction = model.predict(input_data)[0]
-
-        st.subheader("Prediction Result")
-
-        if prediction == "Low":
-            st.success("Predicted Category: LOW")
-        elif prediction == "Moderate":
-            st.warning("Predicted Category: MODERATE")
-        else:
-            st.error("Predicted Category: HIGH")
-
-        st.caption(
-            "Categories are project-defined and are not "
-            "medically validated thresholds."
-        )
-
-    except Exception as error:
-        st.error("Prediction failed.")
-        st.code(str(error))
-
-with st.expander("About the Project"):
-    st.write("""
-    Smartphone Addiction Analysis Among Students
-
-    Machine learning models evaluated:
-    - Logistic Regression
-    - Decision Tree
-    - Random Forest
-    """)
+if __name__ == "__main__":
+    app.run(debug=True)
