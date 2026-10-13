@@ -1,7 +1,6 @@
-
 {
-  "name": "Smartphone Addiction Prediction",
-  "short_name": "Phone Health",
+  "name": "PhoneWell - Smartphone Addiction Prediction",
+  "short_name": "PhoneWell",
   "description": "Machine learning based smartphone addiction prediction",
   "start_url": "/",
   "scope": "/",
