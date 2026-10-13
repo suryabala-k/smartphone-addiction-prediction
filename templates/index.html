@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,14 +38,6 @@
             text-align: center;
             color: #606779;
             line-height: 1.6;
-        }
-
-        .notice {
-            padding: 12px;
-            background: #fff5d9;
-            border-radius: 8px;
-            font-size: 14px;
-            line-height: 1.5;
         }
 
         h2 {
@@ -105,8 +98,6 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            background: #e6f7eb;
-            color: #176534;
         }
 
         .result h2 {
@@ -142,6 +133,7 @@
             text-align: center;
             font-size: 13px;
             color: #72798a;
+            line-height: 1.8;
         }
 
         @media (max-width: 550px) {
@@ -165,12 +157,6 @@
         Enter the student's details and smartphone usage habits
         to obtain a machine-learning prediction.
     </p>
-
-    <div class="notice">
-        <strong>Educational project:</strong>
-        This prediction is for academic purposes only.
-        It is not a medical diagnosis.
-    </div>
 
     <form method="POST">
 
@@ -224,149 +210,4 @@
                     min="0"
                     max="24"
                     step="0.1"
-                    value="{{ form_data.get('daily_usage', '5') }}"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="sleep_hours">
-                    Sleep duration (hours)
-                </label>
-                <input
-                    type="number"
-                    id="sleep_hours"
-                    name="sleep_hours"
-                    min="0"
-                    max="24"
-                    step="0.1"
-                    value="{{ form_data.get('sleep_hours', '7') }}"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="academic_performance">
-                    Academic performance
-                </label>
-                <input
-                    type="number"
-                    id="academic_performance"
-                    name="academic_performance"
-                    step="any"
-                    value="{{ form_data.get('academic_performance', '75') }}"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="phone_checks">
-                    Phone checks per day
-                </label>
-                <input
-                    type="number"
-                    id="phone_checks"
-                    name="phone_checks"
-                    min="0"
-                    value="{{ form_data.get('phone_checks', '50') }}"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="apps_used">
-                    Apps used daily
-                </label>
-                <input
-                    type="number"
-                    id="apps_used"
-                    name="apps_used"
-                    min="0"
-                    value="{{ form_data.get('apps_used', '10') }}"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="social_media">
-                    Social media usage (hours)
-                </label>
-                <input
-                    type="number"
-                    id="social_media"
-                    name="social_media"
-                    min="0"
-                    max="24"
-                    step="0.1"
-                    value="{{ form_data.get('social_media', '2') }}"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="gaming">
-                    Gaming time (hours)
-                </label>
-                <input
-                    type="number"
-                    id="gaming"
-                    name="gaming"
-                    min="0"
-                    max="24"
-                    step="0.1"
-                    value="{{ form_data.get('gaming', '1') }}"
-                    required
-                >
-            </div>
-
-        </div>
-
-        <button type="submit">
-            Predict Addiction Category
-        </button>
-
-    </form>
-
-    {% if prediction is not none %}
-
-        {% set category = prediction | string | lower %}
-
-        {% if category == 'low' %}
-            {% set result_class = 'low' %}
-        {% elif category == 'moderate' %}
-            {% set result_class = 'moderate' %}
-        {% else %}
-            {% set result_class = 'high' %}
-        {% endif %}
-
-        <div class="result {{ result_class }}">
-            <h2>Prediction Result</h2>
-            <p>
-                Predicted Category:
-                <strong>{{ prediction }}</strong>
-            </p>
-        </div>
-
-        <p class="description">
-            Categories are project-defined and are not
-            medically validated thresholds.
-        </p>
-
-    {% endif %}
-
-    {% if error_message %}
-        <div class="error">
-            <strong>Something went wrong:</strong>
-            {{ error_message }}
-        </div>
-    {% endif %}
-
-    <footer>
-        Smartphone Addiction Analysis Among Students
-        <br>
-        Machine Learning Academic Project
-    </footer>
-
-</div>
-</body>
-</html>
+                    value="{{ form_data.get('daily_usage', '5') }}
